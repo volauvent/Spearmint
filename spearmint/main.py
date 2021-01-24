@@ -257,9 +257,9 @@ def main():
 
     # Connect to the database
     db_address = options['database']['address']
-    sys.stderr.write('Using database at %s.\n' % db_address)        
+    sys.stderr.write('Using database at %s.\n' % db_address)
     db         = MongoDB(database_address=db_address)
-    
+
     while True:
 
         for resource_name, resource in resources.iteritems():
@@ -268,23 +268,23 @@ def main():
             # resource.printStatus(jobs)
 
             # If the resource is currently accepting more jobs
-            # TODO: here cost will eventually also be considered: even if the 
+            # TODO: here cost will eventually also be considered: even if the
             #       resource is not full, we might wait because of cost incurred
             # Note: I chose to fill up one resource and them move on to the next
             # You could also do it the other way, by changing "while" to "if" here
 
             while resource.acceptingJobs(jobs):
 
-                # Load jobs from DB 
+                # Load jobs from DB
                 # (move out of one or both loops?) would need to pass into load_tasks
                 jobs = load_jobs(db, experiment_name)
-                
+
                 # Remove any broken jobs from pending.
                 remove_broken_jobs(db, jobs, experiment_name, resources)
 
                 # Get a suggestion for the next job
                 suggested_job = get_suggestion(chooser, resource.tasks, db, expt_dir, options, resource_name)
-    
+
                 # Submit the job to the appropriate resource
                 process_id = resource.attemptDispatch(experiment_name, suggested_job, db_address, expt_dir)
 
@@ -361,7 +361,7 @@ def get_suggestion(chooser, task_names, db, expt_dir, options, resource_name):
     suggested_input = chooser.suggest()
 
     # TODO: implelent this
-    suggested_task = task_names[0]  
+    suggested_task = task_names[0]
 
     # Parse out the name of the main file (TODO: move this elsewhere)
     if "main-file" in task_options[suggested_task]:
@@ -410,7 +410,7 @@ def load_hypers(db, experiment_name):
 
 def load_jobs(db, experiment_name):
     """load the jobs from the database
-    
+
     Returns
     -------
     jobs : list
@@ -469,7 +469,7 @@ def print_diagnostics(chooser):
         if best_job:
             best_job = best_job[0]
         else:
-            best_job 
+            best_job
             raise Warning('Job ID of best input/value pair not recorded.')
 
     # Track the time series of optimization. This should eventually go into a diagnostics module.
@@ -481,7 +481,7 @@ def print_diagnostics(chooser):
 
     # Print out the best job results
     best_job_fh = open(os.path.join(expt_dir, 'best_job_and_result.txt'), 'w')
-    best_job_fh.write("Best result: %f\nJob-id: %d\nParameters: \n" % 
+    best_job_fh.write("Best result: %f\nJob-id: %d\nParameters: \n" %
                       (best_val, best_job))
 
     if best_input:

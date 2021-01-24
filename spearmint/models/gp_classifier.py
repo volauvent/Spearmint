@@ -191,7 +191,7 @@ import scipy.linalg      as spla
 import scipy.optimize    as spo
 import scipy.io          as sio
 import scipy.stats       as sps
-import scipy.weave
+import weave
 
 
 from .gp                                     import GP
@@ -218,7 +218,7 @@ class GPClassifier(GP):
         self.ess_thinning = int(options.get("ess-thinning", 10))
 
         self._set_likelihood(options)
-    
+
         self.prior_whitening = options.get('prior-whitening', True)
 
         sigmoid = options.get("sigmoid", "probit")
@@ -240,7 +240,7 @@ class GPClassifier(GP):
             self.sigmoid            = lambda x: np.greater_equal(x, 0)
             self.sigmoid_derivative = lambda x: 0.
             self.sigmoid_inverse    = lambda x: 0.
-        
+
         # The constraint is that p=s(f) > 1-epsilon
         # where s if the sigmoid and f is the latent function value, and p is the binomial probability
         # This is only in more complicated situations. The main situation where this is used
@@ -285,7 +285,7 @@ class GPClassifier(GP):
         latent_values = np.zeros(self._inputs.shape[0])
         for i in xrange(self._inputs.shape[0]):
             key = str(hash(self._inputs[i].tostring()))
-            
+
             if key in latent_values_dict:
                 latent_values[i] = latent_values_dict[key]
             else:
@@ -405,7 +405,7 @@ class GPClassifier(GP):
         self._set_latent_values_from_dict(self._latent_values_list[state])
 
     def pi(self, pred, compute_grad=False):
-        return super(GPClassifier, self).pi( pred, compute_grad=compute_grad, 
+        return super(GPClassifier, self).pi( pred, compute_grad=compute_grad,
             C=self.sigmoid_inverse(self._one_minus_epsilon) )
 
     def fit(self, inputs, counts, pending=None, hypers=None, reburn=False, fit_hypers=True):
@@ -460,8 +460,8 @@ class GPClassifier(GP):
             y = self.latent_values.value
 
         p = self.sigmoid(y)
-        
-        # Note on the below: the obvious implementation would be 
+
+        # Note on the below: the obvious implementation would be
         #    return np.sum( pos*np.log(p) + neg*np.log(1-p) )
         # The problem is, if pos = 0, and p=0, we will get a 0*-Inf = nan
         # This messes things up. So we use the safer implementation below that ignores
@@ -482,7 +482,7 @@ class GPClassifier(GP):
         # Save the latent values as a dict with keys as hashes of the data
         # so that each latent value is associated with its input
         # then when we load them in we know which ones are which
-        gp_dict['latent values'] = {str(hash(self._inputs[i].tostring())) : self.latent_values.value[i] 
+        gp_dict['latent values'] = {str(hash(self._inputs[i].tostring())) : self.latent_values.value[i]
                 for i in xrange(self._inputs.shape[0])}
 
         gp_dict['chain length'] = self.chain_length

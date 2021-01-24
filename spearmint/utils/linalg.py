@@ -184,7 +184,7 @@
 
 
 import numpy as np
-import scipy.weave
+import weave
 import scipy.linalg as spla
 
 # Update Cholesky decomposition to include a single extra
@@ -195,7 +195,7 @@ import scipy.linalg as spla
 # decomposed.
 # Jasper Snoek
 # Assumes L = chol(A[:-1,:-1])
-def fast_chol_add(L, A): 
+def fast_chol_add(L, A):
     U = L.T
 
     # Add a row and column to U
@@ -205,11 +205,11 @@ def fast_chol_add(L, A):
         G = np.zeros(A.shape)
         G[:U.shape[0], :U.shape[1]] = U
         U = G
-    
+
     (rows,cols) = A.shape
 
     isPosDef = 1;
-    j = rows-1    
+    j = rows-1
     try:
         code = \
         """

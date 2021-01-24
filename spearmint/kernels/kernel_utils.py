@@ -184,25 +184,25 @@
 
 
 import numpy as np
-import scipy.weave
+import weave
 from scipy.spatial.distance import cdist
 
 def dist2(ls, x1, x2=None):
     # Assumes NxD and MxD matrices.
     # Compute the squared distance matrix, given length scales.
-    
+
     if x2 is None:
         # Find distance with self for x1.
 
         # Rescale.
-        xx1 = x1 / ls        
+        xx1 = x1 / ls
         xx2 = xx1
 
     else:
         # Rescale.
         xx1 = x1 / ls
         xx2 = x2 / ls
-    
+
     r2 = cdist(xx1,xx2,'sqeuclidean')
 
     return r2
@@ -210,11 +210,11 @@ def dist2(ls, x1, x2=None):
 def grad_dist2(ls, x1, x2=None):
     if x2 is None:
         x2 = x1
-        
+
     # Rescale.
     x1 = x1 / ls
     x2 = x2 / ls
-    
+
     N = x1.shape[0]
     M = x2.shape[0]
     D = x1.shape[1]
@@ -266,6 +266,6 @@ def dist_Mahalanobis(U, x1, x2=None):
 
 #         return func(cls_instance, *new_args)
 #     return inner
-    
+
 
 
