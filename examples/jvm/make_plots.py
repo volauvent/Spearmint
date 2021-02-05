@@ -145,14 +145,34 @@ def main():
     vals = idata["values"]
     vals = [obj_task.unstandardize_mean(obj_task.unstandardize_variance(v)) for v in vals]
 
+
+    ## print tables of iterations
+    from prettytable import PrettyTable
+    t = PrettyTable(['Test', 'xms', 'G1MaxNewSizePercent',
+                     'G1HeapRegionSize', 'MaxInlineLevel',
+                     'ParallelGCThreads', 'AllocatePrefetchStyle',
+                     'GC_TIME'])
+    for index, row in enumerate(xy):
+        # G1MaxNewSizePercent = value * 10
+        row[1] = row[1] * 10
+        # G1HeapRegionSize = pow(2, value)
+        row[2] = pow(2, row[2])
+        t.add_row(np.concatenate(([index + 1], row.astype(int), [int(vals[index])])))
+    print t
+
+
     ## plot gc_time (vals) in terms of tests
     xaxis = list(range(1, len(vals) + 1))
     ax.scatter(xaxis, vals)
+    # ax.set_ylim((50, 400))
     for j in range(len(vals)):
-        ax.annotate("({},{},{},{},{})".format(int(xy[j][0]),int(xy[j][1]),int(xy[j][2]),int(xy[j][3]),int(xy[j][4])), (xaxis[j], vals[j]), va='bottom', rotation=60)
+        ax.annotate("({}g,{}%,{}m,{},{},{})".format(
+            int(xy[j][0]),int(xy[j][1]), int(xy[j][2]),int(xy[j][3]),int(xy[j][4]), int(xy[j][5])),
+            (xaxis[j], vals[j]), va='bottom', rotation=80)
     ax.set_xlabel("tests")
     ax.set_ylabel("gc_time / ms")
-    ax.legend(["(G1RegionSize, GCThreads, PrefetchStyle, InstancePrefetch, PrefetchLines)"])
+    ax.legend(["(xms, G1MaxNewSizePercent, G1HeapRegionSize, MaxInlineLevel, " + \
+               "ParallelGCThreads, AllocatePrefetchStyle)"])
 
     ## plot errorbars
     # for i in np.arange(0, len(x)):

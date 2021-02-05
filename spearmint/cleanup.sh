@@ -183,14 +183,14 @@
 # its Institution.
 
 #! /bin/bash
-# This is a simple script to cleanup the intermediate files in 
+# This is a simple script to cleanup the intermediate files in
 # spearmint experiment directories
 [[ -n "$1" ]] || { echo "Usage: ./cleanup.sh <experiment_dir>"; exit 0 ; }
 if [ -d $1 ]
 then
     python -c "import spearmint.utils.cleanup as cleanup; import sys; cleanup.cleanup(sys.argv[1])" $1
     cd $1
-    rm output/*
+    yes | rm output/*
 else
     echo "$1 is not a valid directory"
 fi
